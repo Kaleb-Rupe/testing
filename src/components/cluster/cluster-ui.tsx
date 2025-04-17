@@ -3,7 +3,7 @@
 import { useConnection } from '@solana/wallet-adapter-react'
 import { IconTrash } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useCallback, useState } from 'react'
 import { AppModal } from '../ui/ui-layout'
 import { ClusterNetwork, useCluster } from './cluster-data-access'
 import { Connection } from '@solana/web3.js'
@@ -23,16 +23,26 @@ export function ExplorerLink({ path, label, className }: { path: string; label: 
 }
 
 export function ClusterChecker({ children }: { children: ReactNode }) {
-  const { cluster } = useCluster()
-  const { connection } = useConnection()
+  const { cluster } = useCluster();
+  const { connection } = useConnection();
+
+  // Add a check to ensure connection exists and has rpcEndpoint
+  if (!connection || !connection.rpcEndpoint) {
+    return (
+      <div className="alert alert-warning text-warning-content/80 rounded-none flex justify-center">
+        <span>Connection not initialized properly</span>
+      </div>
+    );
+  }
 
   const query = useQuery({
-    queryKey: ['version', { cluster, endpoint: connection.rpcEndpoint }],
+    queryKey: ["version", { cluster, endpoint: connection.rpcEndpoint }],
     queryFn: () => connection.getVersion(),
     retry: 1,
-  })
+  });
+
   if (query.isLoading) {
-    return null
+    return null;
   }
   if (query.isError || !query.data) {
     return (
@@ -40,13 +50,16 @@ export function ClusterChecker({ children }: { children: ReactNode }) {
         <span>
           Error connecting to cluster <strong>{cluster.name}</strong>
         </span>
-        <button className="btn btn-xs btn-neutral" onClick={() => query.refetch()}>
+        <button
+          className="btn btn-xs btn-neutral"
+          onClick={() => query.refetch()}
+        >
           Refresh
         </button>
       </div>
-    )
+    );
   }
-  return children
+  return children;
 }
 
 export function ClusterUiSelect() {

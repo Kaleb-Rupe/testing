@@ -17,3 +17,111 @@ body {
 .wallet-adapter-button {
   font-family: inherit !important;
 }
+
+:root {
+  --drift-primary: 100, 26, 230;
+  /* Purple */
+  --drift-secondary: 0, 240, 180;
+  /* Teal */
+  --drift-background: 10, 10, 15;
+  /* Dark bg */
+  --drift-surface: 24, 24, 30;
+  /* Surface bg */
+  --drift-error: 237, 75, 75;
+  /* Red */
+  --drift-success: 40, 200, 120;
+  /* Green */
+}
+
+/* Card styling */
+.drift-card {
+  background-color: rgb(24, 24, 30);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Button styling */
+.drift-button {
+  background-color: rgb(var(--drift-primary));
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border: none;
+}
+
+.drift-button:hover {
+  background-color: rgba(var(--drift-primary), 0.8);
+}
+
+.drift-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.drift-button-secondary {
+  background-color: rgba(80, 80, 90, 0.5);
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border: none;
+}
+
+.drift-button-secondary:hover {
+  background-color: rgba(100, 100, 110, 0.5);
+}
+
+/* Input styling */
+.drift-input {
+  background-color: rgb(30, 30, 36);
+  border: 1px solid rgb(50, 50, 56);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+
+.drift-input:focus {
+  outline: none;
+  border-color: rgb(var(--drift-primary));
+}
+
+/* Tab styling */
+.drift-tab {
+  padding: 0.5rem 1rem;
+  border-bottom: 2px solid transparent;
+  color: rgb(160, 160, 180);
+  cursor: pointer;
+}
+
+.drift-tab-active {
+  padding: 0.5rem 1rem;
+  border-bottom: 2px solid rgb(var(--drift-primary));
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Position styling */
+.long-position {
+  color: rgb(var(--drift-success));
+}
+
+.short-position {
+  color: rgb(var(--drift-error));
+}
+
+.deposit-balance {
+  color: rgb(var(--drift-success));
+}
+
+.borrow-balance {
+  color: rgb(var(--drift-error));
+}
