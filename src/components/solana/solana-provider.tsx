@@ -19,6 +19,7 @@ export function SolanaProvider({ children }: { children: ReactNode }) {
   const onError = useCallback((error: WalletError) => {
     console.error(error)
   }, [])
+  
 
   return (
     <ConnectionProvider endpoint={endpoint}>

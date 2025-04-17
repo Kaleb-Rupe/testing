@@ -1,18 +1,18 @@
-// src/app/api/drift/utils/driftClient.ts
 import {
   DriftClient,
   initialize,
   Wallet,
   User,
-  BN,
   BulkAccountLoader,
   SpotMarkets,
   PerpMarkets,
   SpotMarketConfig,
   PerpMarketConfig,
   isVariant,
+  DriftEnv,
 } from "@drift-labs/sdk";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
+import BN from "bn.js";
 
 // Initialize a dummy keypair for read-only operations
 const dummyKeypair = Keypair.generate();
@@ -20,14 +20,43 @@ const dummyWallet = new Wallet(dummyKeypair);
 
 // Initialize the Drift Client with the mainnet environment
 const initializeDriftClient = async (pubkey?: string) => {
-  // You can use your own RPC URL from Helius instead of the public one
-  const connection = new Connection(
-    process.env.RPC_URL || "https://api.mainnet-beta.solana.com",
-    "confirmed"
+  // Get the active cluster configuration from localStorage
+  let clusterData;
+  if (typeof window !== "undefined") {
+    const storedCluster = localStorage.getItem("solana-cluster");
+    if (storedCluster) {
+      try {
+        clusterData = JSON.parse(storedCluster);
+      } catch (e) {
+        console.error("Error parsing cluster data:", e);
+      }
+    }
+  }
+
+  // Determine which endpoint and environment to use
+  const endpoint =
+    process.env.RPC_URL ||
+    clusterData?.endpoint ||
+    "https://api.mainnet-beta.solana.com";
+
+  // Map cluster network to Drift environment
+  const driftEnv = (
+    clusterData?.network === "devnet"
+      ? "devnet"
+      : clusterData?.network === "testnet"
+      ? "testnet"
+      : "mainnet-beta"
+  ) as DriftEnv;
+
+  console.log(
+    `Using Drift environment: ${driftEnv} with endpoint: ${endpoint}`
   );
 
-  // Initialize the Drift SDK
-  const sdkConfig = initialize({ env: "mainnet-beta" });
+  // Create connection with the appropriate endpoint
+  const connection = new Connection(endpoint, "confirmed");
+
+  // Initialize the Drift SDK with the appropriate environment
+  const sdkConfig = initialize({ env: driftEnv });
 
   // Create BulkAccountLoader which is required for polling subscription
   const bulkAccountLoader = new BulkAccountLoader(

@@ -1,7 +1,8 @@
 // src/app/api/drift/deposit/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
-import { DriftClient, initialize, Wallet, BN } from "@drift-labs/sdk";
+import { DriftClient, initialize, Wallet } from "@drift-labs/sdk";
+import BN from "bn.js";
 
 export async function POST(request: NextRequest) {
   try {

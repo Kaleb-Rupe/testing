@@ -10,7 +10,6 @@ import {
   DriftClient,
   initialize,
   Wallet,
-  BN,
   OrderType,
   PositionDirection,
   MarketType,
@@ -19,6 +18,7 @@ import {
   BulkAccountLoader,
   OrderTriggerCondition,
 } from "@drift-labs/sdk";
+import BN from "bn.js";
 
 export async function POST(request: NextRequest) {
   try {

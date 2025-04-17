@@ -1,6 +1,7 @@
-// src/store/index.ts
+"use client";
+
 import { create } from "zustand";
-import { OrderType, PositionDirection } from "@drift-labs/sdk";
+import { OrderType, PositionDirection } from "@/types";
 
 export interface SubaccountData {
   id: number;

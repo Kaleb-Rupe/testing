@@ -4,7 +4,7 @@ import { FC, useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useUserStore, useOrderFormStore } from "@/store";
 import { Transaction } from "@solana/web3.js";
-import { OrderType, PositionDirection } from "@/store";
+import { OrderType, PositionDirection } from "@/types";
 
 interface OrderFormProps {
   onClose: () => void;

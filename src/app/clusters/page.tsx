@@ -1,3 +1,5 @@
+'use client'
+
 import ClusterFeature from '@/components/cluster/cluster-feature'
 
 export default function Page() {
