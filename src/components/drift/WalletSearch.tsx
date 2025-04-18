@@ -18,11 +18,24 @@ const WalletSearch: FC<WalletSearchProps> = ({ onSearchComplete }) => {
     setIsLoading(true);
 
     try {
+      // Trim input to remove any whitespace
+      const trimmedAddress = inputAddress.trim();
+
+      if (!trimmedAddress) {
+        throw new Error("Please enter a wallet address");
+      }
+
       // Validate Solana address
-      new PublicKey(inputAddress);
+      try {
+        new PublicKey(trimmedAddress);
+      } catch (error) {
+        throw new Error(
+          "Invalid Solana address format. Please enter a valid address."
+        );
+      }
 
       // Set the search address in the store
-      setSearchAddress(inputAddress);
+      setSearchAddress(trimmedAddress);
       setError(null);
 
       // Notify parent component
@@ -31,10 +44,18 @@ const WalletSearch: FC<WalletSearchProps> = ({ onSearchComplete }) => {
       }
     } catch (error) {
       console.error("Invalid address format:", error);
-      setError("Invalid Solana address format. Please enter a valid address.");
+      setError(
+        error instanceof Error ? error.message : "Invalid address format"
+      );
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const clearSearch = () => {
+    setSearchAddress("");
+    setInputAddress("");
+    setError(null);
   };
 
   return (
@@ -50,18 +71,26 @@ const WalletSearch: FC<WalletSearchProps> = ({ onSearchComplete }) => {
         <button
           type="submit"
           className="drift-button whitespace-nowrap"
-          disabled={isLoading || !inputAddress}
+          disabled={isLoading || !inputAddress.trim()}
         >
           {isLoading ? "Searching..." : "Search"}
         </button>
       </form>
 
       {searchAddress && (
-        <div className="mt-2 text-sm text-gray-400">
-          Currently viewing:{" "}
-          <span className="text-white font-mono">
-            {searchAddress.slice(0, 4)}...{searchAddress.slice(-4)}
-          </span>
+        <div className="mt-2 flex justify-between text-sm text-gray-400">
+          <div>
+            Viewing:{" "}
+            <span className="text-white font-mono">
+              {searchAddress.slice(0, 8)}...{searchAddress.slice(-8)}
+            </span>
+          </div>
+          <button
+            onClick={clearSearch}
+            className="text-[rgb(var(--drift-secondary))] hover:underline"
+          >
+            Clear
+          </button>
         </div>
       )}
     </div>

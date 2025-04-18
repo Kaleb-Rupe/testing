@@ -19,7 +19,7 @@ const OrdersList: FC<OrdersListProps> = ({ onClickNewOrder }) => {
     );
   }
 
-  if (orders.length === 0) {
+  if (!orders || orders.length === 0) {
     return (
       <div className="drift-card">
         <h3 className="mb-4">Open Orders</h3>
@@ -56,7 +56,9 @@ const OrdersList: FC<OrdersListProps> = ({ onClickNewOrder }) => {
           <tbody>
             {orders.map((order) => (
               <tr key={order.orderId} className="border-t border-gray-800">
-                <td className="py-3">{order.symbol}</td>
+                <td className="py-3">
+                  {order.symbol || `Market-${order.marketIndex}`}
+                </td>
                 <td
                   className={`py-3 ${
                     order.direction === "LONG"
@@ -66,10 +68,12 @@ const OrdersList: FC<OrdersListProps> = ({ onClickNewOrder }) => {
                 >
                   {order.direction}
                 </td>
-                <td className="py-3">{order.type}</td>
-                <td className="py-3">{parseFloat(order.size).toFixed(4)}</td>
+                <td className="py-3">{order.type || "UNKNOWN"}</td>
+                <td className="py-3">
+                  {parseFloat(order.size || "0").toFixed(4)}
+                </td>
                 <td className="py-3 text-right">
-                  ${parseFloat(order.price).toFixed(2)}
+                  ${parseFloat(order.price || "0").toFixed(2)}
                 </td>
               </tr>
             ))}

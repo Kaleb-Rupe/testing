@@ -19,7 +19,7 @@ const PositionsList: FC<PositionsListProps> = ({ onClickNewPosition }) => {
     );
   }
 
-  if (positions.length === 0) {
+  if (!positions || positions.length === 0) {
     return (
       <div className="drift-card">
         <h3 className="mb-4">Perpetual Positions</h3>
@@ -35,7 +35,7 @@ const PositionsList: FC<PositionsListProps> = ({ onClickNewPosition }) => {
 
   // Calculate total PnL
   const totalPnL = positions.reduce((total, position) => {
-    return total + parseFloat(position.pnl);
+    return total + parseFloat(position.pnl || "0");
   }, 0);
 
   return (
@@ -81,22 +81,24 @@ const PositionsList: FC<PositionsListProps> = ({ onClickNewPosition }) => {
                   {position.isLong ? "LONG" : "SHORT"}
                 </td>
                 <td className="py-3">
-                  {Math.abs(parseFloat(position.baseAssetAmount)).toFixed(4)}
+                  {Math.abs(
+                    parseFloat(position.baseAssetAmount || "0")
+                  ).toFixed(4)}
                 </td>
                 <td className="py-3">
-                  ${parseFloat(position.entryPrice).toFixed(2)}
+                  ${parseFloat(position.entryPrice || "0").toFixed(2)}
                 </td>
                 <td className="py-3">
-                  ${parseFloat(position.markPrice).toFixed(2)}
+                  ${parseFloat(position.markPrice || "0").toFixed(2)}
                 </td>
                 <td
                   className={`py-3 text-right ${
-                    parseFloat(position.pnl) >= 0
+                    parseFloat(position.pnl || "0") >= 0
                       ? "text-green-500"
                       : "text-red-500"
                   }`}
                 >
-                  ${parseFloat(position.pnl).toFixed(2)}
+                  ${parseFloat(position.pnl || "0").toFixed(2)}
                 </td>
               </tr>
             ))}

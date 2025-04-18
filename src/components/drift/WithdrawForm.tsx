@@ -33,7 +33,7 @@ const WithdrawForm: FC<WithdrawFormProps> = ({ onClose, onSuccess }) => {
   // Update max amount when market changes
   useEffect(() => {
     const balance = balances.find((b) => b.marketIndex === marketIndex);
-    if (balance && parseFloat(balance.amount) > 0) {
+    if (balance && balance.isDeposit && parseFloat(balance.amount) > 0) {
       setMaxAmount(balance.amount);
     } else {
       setMaxAmount("0");
@@ -55,7 +55,7 @@ const WithdrawForm: FC<WithdrawFormProps> = ({ onClose, onSuccess }) => {
 
     if (parseFloat(amount) > parseFloat(maxAmount)) {
       setError(
-        `You can only withdraw up to ${maxAmount} ${
+        `You can only withdraw up to ${parseFloat(maxAmount).toFixed(4)} ${
           MARKETS.find((m) => m.index === marketIndex)?.symbol
         }`
       );
@@ -88,6 +88,10 @@ const WithdrawForm: FC<WithdrawFormProps> = ({ onClose, onSuccess }) => {
       }
 
       const { transaction: base64Transaction } = await response.json();
+
+      if (!base64Transaction) {
+        throw new Error("No transaction returned from server");
+      }
 
       // Convert base64 transaction to Transaction object
       const transactionBuffer = Buffer.from(base64Transaction, "base64");
@@ -170,7 +174,7 @@ const WithdrawForm: FC<WithdrawFormProps> = ({ onClose, onSuccess }) => {
               >
                 {MARKETS.map((market) => {
                   const balance = balances.find(
-                    (b) => b.marketIndex === market.index
+                    (b) => b.marketIndex === market.index && b.isDeposit
                   );
                   const balanceAmount =
                     balance && parseFloat(balance.amount) > 0

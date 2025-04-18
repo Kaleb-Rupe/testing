@@ -1,15 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import * as React from "react";
 import { ReactNode, Suspense } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import dynamic from "next/dynamic";
 
-import { WalletButton } from "../solana/solana-provider";
+// Dynamically import the WalletMultiButton to prevent SSR issues
+const WalletMultiButton = dynamic(
+  async () => 
+    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  { ssr: false }
+);
 
 export function UiLayout({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
 
   return (
     <div className="h-full flex flex-col">
@@ -20,7 +24,7 @@ export function UiLayout({ children }: { children: ReactNode }) {
           </Link>
         </div>
         <div className="flex-none space-x-2">
-          <WalletButton />
+          <WalletMultiButton />
         </div>
       </div>
       <div className="flex-grow mx-4 lg:mx-auto">

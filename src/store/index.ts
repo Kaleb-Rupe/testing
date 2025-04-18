@@ -1,3 +1,4 @@
+// src/store/index.ts (UPDATED)
 "use client";
 
 import { create } from "zustand";
@@ -7,6 +8,7 @@ export interface SubaccountData {
   id: number;
   name: string;
   authority: string;
+  publicKey?: string;
 }
 
 export interface BalanceData {
@@ -129,7 +131,7 @@ export const useUserStore = create<UserState>((set) => ({
     }),
 }));
 
-// Order Form Store
+// Order Form Store - Simplified with sensible defaults
 export const useOrderFormStore = create<OrderFormState>((set) => ({
   marketIndex: 0, // Default to SOL-PERP
   symbol: "SOL-PERP",

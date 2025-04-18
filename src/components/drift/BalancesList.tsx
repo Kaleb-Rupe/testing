@@ -23,7 +23,7 @@ const BalancesList: FC<BalancesListProps> = ({
     );
   }
 
-  if (balances.length === 0) {
+  if (!balances || balances.length === 0) {
     return (
       <div className="drift-card">
         <h3 className="mb-4">Balances</h3>
@@ -39,7 +39,7 @@ const BalancesList: FC<BalancesListProps> = ({
 
   // Calculate total balance in USD
   const totalBalanceUSD = balances.reduce((total, balance) => {
-    return total + parseFloat(balance.usdValue);
+    return total + parseFloat(balance.usdValue || "0");
   }, 0);
 
   return (
@@ -73,10 +73,10 @@ const BalancesList: FC<BalancesListProps> = ({
                     balance.isDeposit ? "deposit-balance" : "borrow-balance"
                   }`}
                 >
-                  {parseFloat(balance.amount).toFixed(4)}
+                  {parseFloat(balance.amount || "0").toFixed(4)}
                 </td>
                 <td className="py-3 text-right">
-                  ${parseFloat(balance.usdValue).toFixed(2)}
+                  ${parseFloat(balance.usdValue || "0").toFixed(2)}
                 </td>
               </tr>
             ))}

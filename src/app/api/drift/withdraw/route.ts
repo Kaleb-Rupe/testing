@@ -17,6 +17,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Parse amount to validate it's a positive number
+    const amountValue = parseFloat(amount);
+    if (isNaN(amountValue) || amountValue <= 0) {
+      return NextResponse.json(
+        {
+          error: "Amount must be a positive number",
+        },
+        { status: 400 }
+      );
+    }
+
     // Initialize connection to mainnet
     const connection = new Connection(
       process.env.RPC_URL || "https://api.mainnet-beta.solana.com",
@@ -57,7 +68,7 @@ export async function POST(request: NextRequest) {
 
     const decimalPlaces = spotMarket.decimals;
     const multiplier = Math.pow(10, decimalPlaces);
-    const amountBN = new BN(Math.floor(parseFloat(amount) * multiplier));
+    const amountBN = new BN(Math.floor(amountValue * multiplier));
 
     // Get the associated token account for withdrawal
     const associatedTokenAddress = await driftClient.getAssociatedTokenAccount(
@@ -97,9 +108,12 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error creating withdraw transaction:", error);
-    return NextResponse.json(
-      { error: "Failed to create withdraw transaction" },
-      { status: 500 }
-    );
+    let errorMessage = "Failed to create withdraw transaction";
+
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

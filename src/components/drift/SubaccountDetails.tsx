@@ -56,9 +56,16 @@ const SubaccountDetails: FC<SubaccountDetailsProps> = ({ walletAddress }) => {
         }
 
         const data = await response.json();
-        setBalances(data.balances || []);
-        setPositions(data.positions || []);
-        setOrders(data.orders || []);
+
+        // Verify data structure before setting state
+        if (data) {
+          setBalances(Array.isArray(data.balances) ? data.balances : []);
+          setPositions(Array.isArray(data.positions) ? data.positions : []);
+          setOrders(Array.isArray(data.orders) ? data.orders : []);
+        } else {
+          console.error("Invalid data format received:", data);
+          setError("Invalid data format received from server");
+        }
       } catch (error) {
         console.error("Error fetching user data:", error);
         setError(
@@ -111,9 +118,13 @@ const SubaccountDetails: FC<SubaccountDetailsProps> = ({ walletAddress }) => {
             throw new Error(errorData.error || "Failed to fetch user data");
           }
           const data = await response.json();
-          setBalances(data.balances || []);
-          setPositions(data.positions || []);
-          setOrders(data.orders || []);
+          if (data) {
+            setBalances(Array.isArray(data.balances) ? data.balances : []);
+            setPositions(Array.isArray(data.positions) ? data.positions : []);
+            setOrders(Array.isArray(data.orders) ? data.orders : []);
+          } else {
+            throw new Error("Invalid data format received from server");
+          }
         })
         .catch((error) => {
           console.error("Error refreshing data:", error);
@@ -142,8 +153,8 @@ const SubaccountDetails: FC<SubaccountDetailsProps> = ({ walletAddress }) => {
             className="drift-button-secondary flex items-center space-x-1"
             disabled={loadingData}
           >
-            <span>Refresh</span>
-            <span className="text-lg">↻</span>
+            <span>{loadingData ? "Loading..." : "Refresh"}</span>
+            {!loadingData && <span className="text-lg">↻</span>}
           </button>
         </div>
       </div>

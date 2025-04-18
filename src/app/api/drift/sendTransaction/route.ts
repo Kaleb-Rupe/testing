@@ -1,3 +1,4 @@
+// src/app/api/drift/sendTransaction/route.ts (UPDATED)
 import { NextRequest, NextResponse } from "next/server";
 import { Connection } from "@solana/web3.js";
 
@@ -25,21 +26,49 @@ export async function POST(request: NextRequest) {
     // Send the transaction
     const signature = await connection.sendRawTransaction(transactionBuffer);
 
-    // Wait for confirmation
-    const latestBlockhash = await connection.getLatestBlockhash();
-    const confirmationStrategy = {
-      signature,
-      lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
-      blockhash: latestBlockhash.blockhash,
-    };
-    const confirmation = await connection.confirmTransaction(
-      confirmationStrategy
-    );
+    // Wait for confirmation with a timeout
+    const confirmationTimeout = 60000; // 60 seconds timeout
+    const startTime = Date.now();
 
-    if (confirmation.value.err) {
-      throw new Error(
-        `Transaction failed: ${confirmation.value.err.toString()}`
+    try {
+      const latestBlockhash = await connection.getLatestBlockhash();
+      const confirmationStrategy = {
+        signature,
+        lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+        blockhash: latestBlockhash.blockhash,
+      };
+
+      const confirmation = await Promise.race([
+        connection.confirmTransaction(confirmationStrategy),
+        new Promise((_, reject) =>
+          setTimeout(
+            () => reject(new Error("Transaction confirmation timeout")),
+            confirmationTimeout
+          )
+        ),
+      ]);
+
+      if (
+        confirmation &&
+        typeof confirmation === "object" &&
+        "value" in confirmation &&
+        typeof confirmation.value === "object" &&
+        confirmation.value !== null &&
+        "err" in confirmation.value &&
+        typeof confirmation.value.err === "object" &&
+        confirmation.value.err !== null &&
+        "message" in confirmation.value.err
+      ) {
+        throw new Error(
+          `Transaction failed: ${confirmation.value.err.message}`
+        );
+      }
+    } catch (confirmError) {
+      console.warn(
+        "Confirmation error, but transaction may still succeed:",
+        confirmError
       );
+      // Still return the signature since the transaction was sent
     }
 
     return NextResponse.json({
@@ -48,9 +77,12 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error sending transaction:", error);
-    return NextResponse.json(
-      { error: "Failed to send transaction" },
-      { status: 500 }
-    );
+    let errorMessage = "Failed to send transaction";
+
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

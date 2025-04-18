@@ -1,6 +1,7 @@
+// src/app/layout.tsx (UPDATED)
 import "./globals.css";
 import { ReactQueryProvider } from "./react-query-provider";
-import { SolanaProvider } from "@/components/solana/solana-provider";
+import SolanaProvider from "@/components/solana/solana-provider";
 import { UiLayout } from "@/components/ui/ui-layout";
 
 export const metadata = {

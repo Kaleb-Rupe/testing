@@ -1,4 +1,3 @@
-// src/components/drift/SubaccountsList.tsx
 "use client";
 
 import { FC, useEffect, useState } from "react";
@@ -48,11 +47,17 @@ const SubaccountsList: FC<SubaccountsListProps> = ({ walletAddress }) => {
         }
 
         const data = await response.json();
-        setSubaccounts(data.subaccounts);
 
-        // Set the first subaccount as active if there is no active subaccount
-        if (data.subaccounts.length > 0 && activeSubaccountId === null) {
-          setActiveSubaccountId(data.subaccounts[0].id);
+        if (data.subaccounts && Array.isArray(data.subaccounts)) {
+          setSubaccounts(data.subaccounts);
+
+          // Set the first subaccount as active if there is no active subaccount
+          if (data.subaccounts.length > 0 && activeSubaccountId === null) {
+            setActiveSubaccountId(data.subaccounts[0].id);
+          }
+        } else {
+          console.error("Invalid subaccounts data format", data);
+          setError("Invalid data format received from the server");
         }
       } catch (error) {
         console.error("Error fetching subaccounts:", error);
@@ -105,7 +110,8 @@ const SubaccountsList: FC<SubaccountsListProps> = ({ walletAddress }) => {
             <p className="font-medium">{subaccount.name}</p>
             <p className="text-sm text-gray-400">ID: {subaccount.id}</p>
             <p className="text-xs text-gray-500 truncate">
-              PK: {subaccount.authority}
+              {subaccount.authority.slice(0, 8)}...
+              {subaccount.authority.slice(-8)}
             </p>
           </div>
         ))}

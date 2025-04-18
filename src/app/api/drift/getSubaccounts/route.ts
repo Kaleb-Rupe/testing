@@ -1,7 +1,6 @@
-// src/app/api/drift/getSubaccounts/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getUserAccountsForAuthority } from "@/app/api/drift/utils/driftClient";
-
+import { UserAccount } from "@drift-labs/sdk";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -16,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     const userAccounts = await getUserAccountsForAuthority(walletAddress);
 
-    const subaccounts = userAccounts.map((acc) => ({
+    const subaccounts = userAccounts.map((acc: UserAccount) => ({
       id: acc.subAccountId,
       name: acc.name || `Subaccount ${acc.subAccountId}`,
       authority: acc.authority.toString(),

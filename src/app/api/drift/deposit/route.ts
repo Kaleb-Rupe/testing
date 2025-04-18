@@ -46,8 +46,18 @@ export async function POST(request: NextRequest) {
 
     // Convert amount to the appropriate precision
     const spotMarket = driftClient.getSpotMarketAccount(marketIndex);
-    const multiplier = Math.pow(10, spotMarket?.decimals || 0);
-    const amountBN = new BN(parseFloat(amount) * multiplier);
+    if (!spotMarket) {
+      return NextResponse.json(
+        {
+          error: `Failed to find spot market with index ${marketIndex}`,
+        },
+        { status: 400 }
+      );
+    }
+
+    const decimalPlaces = spotMarket.decimals;
+    const multiplier = Math.pow(10, decimalPlaces);
+    const amountBN = new BN(Math.floor(parseFloat(amount) * multiplier));
 
     // Get the ATA for the deposit
     const associatedTokenAddress = await driftClient.getAssociatedTokenAccount(
@@ -87,9 +97,12 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error creating deposit transaction:", error);
-    return NextResponse.json(
-      { error: "Failed to create deposit transaction" },
-      { status: 500 }
-    );
+    let errorMessage = "Failed to create deposit transaction";
+
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
