@@ -1,4 +1,3 @@
-// src/app/api/drift/getUser/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getUserData } from "@/app/api/drift/utils/driftClient";
 

@@ -1,4 +1,3 @@
-// src/app/api/drift/deposit/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { DriftClient, initialize, Wallet } from "@drift-labs/sdk";
@@ -18,13 +17,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Initialize connection
+    // Initialize connection to mainnet
     const connection = new Connection(
       process.env.RPC_URL || "https://api.mainnet-beta.solana.com",
       "confirmed"
     );
 
-    // Initialize SDK config
+    // Initialize SDK config for mainnet
     const sdkConfig = initialize({ env: "mainnet-beta" });
 
     // Create a dummy wallet just to initialize the client

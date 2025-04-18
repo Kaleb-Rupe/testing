@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 
+
 export const metadata: Metadata = {
   title: "Drift Protocol Dashboard",
   description: "View and manage your Drift Protocol subaccounts and positions",

@@ -1,7 +1,15 @@
-'use client'
+"use client";
 
-import DashboardFeature from '@/components/dashboard/dashboard-feature'
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { AppHero } from "@/components/ui/ui-layout";
 
 export default function Page() {
-  return <DashboardFeature />
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/drift");
+  }, [router]);
+
+  return <AppHero title="Drift Protocol Dashboard" subtitle="Loading..." />;
 }

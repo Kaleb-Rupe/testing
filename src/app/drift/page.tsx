@@ -1,3 +1,4 @@
+// src/app/drift/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -46,7 +47,6 @@ export default function DriftPage() {
               >
                 {showWalletSearch ? "View My Wallet" : "Search Wallet"}
               </button>
-              <WalletMultiButton className="!bg-[rgb(var(--drift-primary))] !hover:bg-[rgb(var(--drift-secondary))] !text-white !font-bold !py-2 !px-4 !rounded !transition-colors" />
             </div>
           </div>
 

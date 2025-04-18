@@ -9,7 +9,6 @@ import {
   SpotMarketConfig,
   PerpMarketConfig,
   isVariant,
-  DriftEnv,
 } from "@drift-labs/sdk";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
@@ -20,43 +19,16 @@ const dummyWallet = new Wallet(dummyKeypair);
 
 // Initialize the Drift Client with the mainnet environment
 const initializeDriftClient = async (pubkey?: string) => {
-  // Get the active cluster configuration from localStorage
-  let clusterData;
-  if (typeof window !== "undefined") {
-    const storedCluster = localStorage.getItem("solana-cluster");
-    if (storedCluster) {
-      try {
-        clusterData = JSON.parse(storedCluster);
-      } catch (e) {
-        console.error("Error parsing cluster data:", e);
-      }
-    }
-  }
+  // Always use mainnet-beta endpoint
+  const endpoint = process.env.RPC_URL || "https://api.mainnet-beta.solana.com";
 
-  // Determine which endpoint and environment to use
-  const endpoint =
-    process.env.RPC_URL ||
-    clusterData?.endpoint ||
-    "https://api.mainnet-beta.solana.com";
-
-  // Map cluster network to Drift environment
-  const driftEnv = (
-    clusterData?.network === "devnet"
-      ? "devnet"
-      : clusterData?.network === "testnet"
-      ? "testnet"
-      : "mainnet-beta"
-  ) as DriftEnv;
-
-  console.log(
-    `Using Drift environment: ${driftEnv} with endpoint: ${endpoint}`
-  );
+  console.log(`Using endpoint: ${endpoint}`);
 
   // Create connection with the appropriate endpoint
   const connection = new Connection(endpoint, "confirmed");
 
-  // Initialize the Drift SDK with the appropriate environment
-  const sdkConfig = initialize({ env: driftEnv });
+  // Initialize the Drift SDK with mainnet environment
+  const sdkConfig = initialize({ env: "mainnet-beta" });
 
   // Create BulkAccountLoader which is required for polling subscription
   const bulkAccountLoader = new BulkAccountLoader(
@@ -86,6 +58,8 @@ const initializeDriftClient = async (pubkey?: string) => {
   await driftClient.subscribe();
   return driftClient;
 };
+
+// Rest of the file remains the same - getUserAccountsForAuthority and getUserData functions
 
 // Get all user accounts for a wallet authority
 export const getUserAccountsForAuthority = async (authority: string) => {

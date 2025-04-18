@@ -15,6 +15,7 @@ const WalletSearch: FC<WalletSearchProps> = ({ onSearchComplete }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       // Validate Solana address
@@ -22,13 +23,17 @@ const WalletSearch: FC<WalletSearchProps> = ({ onSearchComplete }) => {
 
       // Set the search address in the store
       setSearchAddress(inputAddress);
+      setError(null);
 
       // Notify parent component
       if (onSearchComplete) {
         onSearchComplete();
       }
     } catch (error) {
-      setError("Invalid Solana address format");
+      console.error("Invalid address format:", error);
+      setError("Invalid Solana address format. Please enter a valid address.");
+    } finally {
+      setIsLoading(false);
     }
   };
 

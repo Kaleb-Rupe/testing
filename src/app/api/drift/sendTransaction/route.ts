@@ -1,4 +1,3 @@
-// src/app/api/drift/sendTransaction/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { Connection } from "@solana/web3.js";
 
@@ -14,7 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Initialize connection
+    // Initialize connection to mainnet
     const connection = new Connection(
       process.env.RPC_URL || "https://api.mainnet-beta.solana.com",
       "confirmed"
